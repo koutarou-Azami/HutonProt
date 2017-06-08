@@ -41,23 +41,14 @@ public class PoseManager : MonoBehaviour
         Deformed // デフォルメ
     }
     [SerializeField, Tooltip("現在のポーズ")]
-    public PoseState _Pose;
+    public static PoseState _Pose;
 
     /****ポーズオブジェクトの取得****/
     // ポーズオブジェクトを取得するためにCanvasを取得する
     public Canvas _PoseCanvas;
-    // 開脚のオブジェクトを取得
-    private Image _OpenLeg;
-    public Pose_opneLeg _openLeg;
     // 四股のオブジェクトを取得
     private Image _Shiko;
     public Pose_shiko _shiko;
-    // エッフェル塔のオブジェクトを取得
-    private Image _Eiffelt;
-    public Pose_eiffelt _eiffelt;
-    // アルファベットHのオブジェクトを取得
-    private Image _AlphaH;
-    public Pose_H _alphaH;
     // アルファベットUのオブジェクトを取得
     private Image _AlphaU;
     public Pose_U _alphaU;
@@ -79,11 +70,11 @@ public class PoseManager : MonoBehaviour
     public ScoreView _view;
     public bool _scoreCount;
     [SerializeField, Tooltip("全身でポーズをとれてるか")]
-    public bool _ScoreWhole;
+    public static bool _ScoreWhole;
     [SerializeField, Tooltip("上半身でポーズをとれてるか")]
-    public bool _ScoreUpper;
+    public static bool _ScoreUpper;
     [SerializeField, Tooltip("下半身でポーズをとれてるか")]
-    public bool _ScoreLower;
+    public static bool _ScoreLower;
 
     private AudioSource _audioSource;
     
@@ -93,20 +84,14 @@ public class PoseManager : MonoBehaviour
         // ポーズのオブジェクトを取得する
         _PoseCanvas = GameObject.Find("Pose_canvas").GetComponent<Canvas>();
         _Big = _PoseCanvas.GetComponentInChildren<Image>();
-        _OpenLeg = GameObject.Find("Pose_OpneLeg").GetComponent<Image>();
         _Shiko = GameObject.Find("Pose_Shiko").GetComponent<Image>();
-        _Eiffelt = GameObject.Find("Pose_Eiffelt").GetComponent<Image>();
-        _AlphaH = GameObject.Find("Pose_H").GetComponent<Image>();
         _AlphaU = GameObject.Find("Pose_U").GetComponent<Image>();
         _AlphaX = GameObject.Find("Pose_X").GetComponent<Image>();
         _Exit = GameObject.Find("Pose_Exit").GetComponent<Image>();
         _Happy = GameObject.Find("Pose_Happy").GetComponent<Image>();
         
         // ポーズのスクリプトを取得
-        _openLeg = GameObject.Find("Pose_OpneLeg").GetComponent<Pose_opneLeg>();
         _shiko = GameObject.Find("Pose_Shiko").GetComponent<Pose_shiko>();
-        _eiffelt = GameObject.Find("Pose_Eiffelt").GetComponent<Pose_eiffelt>();
-        _alphaH = GameObject.Find("Pose_H").GetComponent<Pose_H>();
         _alphaU = GameObject.Find("Pose_U").GetComponent<Pose_U>();
         _alphaX = GameObject.Find("Pose_X").GetComponent<Pose_X>();
         _exit = GameObject.Find("Pose_Exit").GetComponent<Pose_exit>();
@@ -130,56 +115,31 @@ public class PoseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GetPoseState();
-
-        if (_scoreCount == true)
+        if(_Pose == PoseState.The_Eiffel_Tower)
         {
-            Pose();
-            GetPose();
-            GetUpperPose();
-            GetLowerPose();
-        }
-        else
-        {
-            _ScoreWhole = false;
-            _ScoreUpper = false;
-            _ScoreLower = false;
-            _Pose = PoseState.None;
+            if (_ScoreWhole == true)
+            {
+                Additional_score(1500);
+            }
+            else if (_ScoreUpper == true)
+            {
+                Additional_score(35);
+            }
+            else if (_ScoreLower == true)
+            {
+                Additional_score(40);
+            }
         }
     }
     
     public void GetPoseState()
     {
-        if((_openLeg.R_arm_flag == true &&
-            _openLeg.L_arm_flag == true) ||
-            (_openLeg.R_leg_flag == true &&
-            _openLeg.L_leg_flag == true))
-        {
-            _Pose = PoseState.Open_leg;
-            _scoreCount = true;
-        }
         if((_shiko.R_arm_flag == true &&
             _shiko.L_arm_flag == true) ||
             (_shiko.R_leg_flag == true &&
             _shiko.L_leg_flag == true))
         {
             _Pose = PoseState.Chico;
-            _scoreCount = true;
-        }
-        if((_eiffelt.R_arm_flag == true &&
-            _eiffelt.L_arm_flag == true) ||
-            (_eiffelt.R_leg_flag == true &&
-            _eiffelt.L_leg_flag == true))
-        {
-            _Pose = PoseState.The_Eiffel_Tower;
-            _scoreCount = true;
-        }
-        if((_alphaH.R_arm_flag == true &&
-            _alphaH.L_arm_flag == true) ||
-            (_alphaH.R_leg_flag == true &&
-            _alphaH.L_leg_flag == true))
-        {
-            _Pose = PoseState.AlphaH;
             _scoreCount = true;
         }
         if((_alphaU.R_arm_flag == true &&
@@ -227,31 +187,10 @@ public class PoseManager : MonoBehaviour
     public void GetPose()
     {
         /*上半身、下半身のポーズが是のとき、全身でのポーズのフラグを是に*/
-        if(_openLeg.L_arm_flag == true &&
-            _openLeg.R_arm_flag == true &&
-            _openLeg.L_leg_flag == true &&
-            _openLeg.R_leg_flag == true)
-        {
-            _ScoreWhole = true;
-        }
         if(_shiko.L_arm_flag == true &&
             _shiko.R_arm_flag == true &&
             _shiko.L_leg_flag == true &&
             _shiko.R_leg_flag == true)
-        {
-            _ScoreWhole = true;
-        }
-        if (_eiffelt.L_arm_flag == true &&
-            _eiffelt.R_arm_flag == true &&
-            _eiffelt.L_leg_flag == true &&
-            _eiffelt.R_leg_flag == true)
-        {
-            _ScoreWhole = true;
-        }
-        if (_alphaH.L_arm_flag == true &&
-            _alphaH.R_arm_flag == true &&
-            _alphaH.L_leg_flag == true &&
-            _alphaH.R_leg_flag == true)
         {
             _ScoreWhole = true;
         }
@@ -296,23 +235,8 @@ public class PoseManager : MonoBehaviour
     public void GetUpperPose()
     {
         /* 両腕の判定が是のとき、上半身ポーズのフラグを是に*/
-        if(_openLeg.R_arm_flag == true &&
-            _openLeg.L_arm_flag == true)
-        {
-            _ScoreUpper = true;
-        }
         if (_shiko.R_arm_flag == true &&
             _shiko.L_arm_flag == true)
-        {
-            _ScoreUpper = true;
-        }
-        if (_eiffelt.R_arm_flag == true &&
-            _eiffelt.L_arm_flag == true)
-        {
-            _ScoreUpper = true;
-        }
-        if (_alphaH.R_arm_flag == true &&
-            _alphaH.L_arm_flag == true)
         {
             _ScoreUpper = true;
         }
@@ -347,23 +271,8 @@ public class PoseManager : MonoBehaviour
     public void GetLowerPose()
     {
         /*両足の判定は是のとき、下半身ポーズのフラグを是に*/
-        if(_openLeg.R_leg_flag == true &&
-            _openLeg.L_leg_flag == true)
-        {
-            _ScoreLower = true;
-        }
         if (_shiko.R_leg_flag == true &&
             _shiko.L_leg_flag == true)
-        {
-            _ScoreLower = true;
-        }
-        if (_eiffelt.R_leg_flag == true &&
-            _eiffelt.L_leg_flag == true)
-        {
-            _ScoreLower = true;
-        }
-        if (_alphaH.R_leg_flag == true &&
-            _alphaH.L_leg_flag == true)
         {
             _ScoreLower = true;
         }
@@ -475,21 +384,6 @@ public class PoseManager : MonoBehaviour
                 }
                 break;
             case PoseState.The_Eiffel_Tower:
-                if(_ScoreWhole == true)
-                {
-                    Additional_score(1500);
-                    _scoreCount = false;
-                }
-                else if(_ScoreUpper == true)
-                {
-                    Additional_score(35);
-                    _scoreCount = false;
-                }
-                else if(_ScoreLower == true)
-                {
-                    Additional_score(40);
-                    _scoreCount = false;
-                }
                 break;
             case PoseState.Banana:
                 if(_ScoreWhole == true)
