@@ -41,14 +41,11 @@ public class PoseManager : MonoBehaviour
         Deformed // デフォルメ
     }
     [SerializeField, Tooltip("現在のポーズ")]
-    public static PoseState _Pose;
+    public PoseState _Pose;
 
     /****ポーズオブジェクトの取得****/
     // ポーズオブジェクトを取得するためにCanvasを取得する
     public Canvas _PoseCanvas;
-    // 四股のオブジェクトを取得
-    private Image _Shiko;
-    public Pose_shiko _shiko;
     // アルファベットUのオブジェクトを取得
     private Image _AlphaU;
     public Pose_U _alphaU;
@@ -58,23 +55,17 @@ public class PoseManager : MonoBehaviour
     // 出口のオブジェクトを取得
     private Image _Exit;
     public Pose_exit _exit;
-    // 大の字のオブジェクトを取得
-    private Image _Big;
-    public Pose_big _big;
-    // 喜びのオブジェクトを取得
-    private Image _Happy;
-    public Pose_Happy _happy;
-
+    
     /*スコアオブジェクトの取得*/
     private Canvas _View;
     public ScoreView _view;
     public bool _scoreCount;
     [SerializeField, Tooltip("全身でポーズをとれてるか")]
-    public static bool _ScoreWhole;
+    public bool _ScoreWhole;
     [SerializeField, Tooltip("上半身でポーズをとれてるか")]
-    public static bool _ScoreUpper;
+    public bool _ScoreUpper;
     [SerializeField, Tooltip("下半身でポーズをとれてるか")]
-    public static bool _ScoreLower;
+    public bool _ScoreLower;
 
     private AudioSource _audioSource;
     
@@ -83,20 +74,15 @@ public class PoseManager : MonoBehaviour
     {
         // ポーズのオブジェクトを取得する
         _PoseCanvas = GameObject.Find("Pose_canvas").GetComponent<Canvas>();
-        _Big = _PoseCanvas.GetComponentInChildren<Image>();
-        _Shiko = GameObject.Find("Pose_Shiko").GetComponent<Image>();
         _AlphaU = GameObject.Find("Pose_U").GetComponent<Image>();
         _AlphaX = GameObject.Find("Pose_X").GetComponent<Image>();
         _Exit = GameObject.Find("Pose_Exit").GetComponent<Image>();
-        _Happy = GameObject.Find("Pose_Happy").GetComponent<Image>();
         
         // ポーズのスクリプトを取得
-        _shiko = GameObject.Find("Pose_Shiko").GetComponent<Pose_shiko>();
         _alphaU = GameObject.Find("Pose_U").GetComponent<Pose_U>();
         _alphaX = GameObject.Find("Pose_X").GetComponent<Pose_X>();
         _exit = GameObject.Find("Pose_Exit").GetComponent<Pose_exit>();
-        _big = GameObject.Find("Pose_Big").GetComponent<Pose_big>();
-        _happy = GameObject.Find("Pose_Happy").GetComponent<Pose_Happy>();
+        
         
         // 初期ポーズは指定なし
         _Pose = PoseState.None;
@@ -134,14 +120,6 @@ public class PoseManager : MonoBehaviour
     
     public void GetPoseState()
     {
-        if((_shiko.R_arm_flag == true &&
-            _shiko.L_arm_flag == true) ||
-            (_shiko.R_leg_flag == true &&
-            _shiko.L_leg_flag == true))
-        {
-            _Pose = PoseState.Chico;
-            _scoreCount = true;
-        }
         if((_alphaU.R_arm_flag == true &&
             _alphaU.L_arm_flag == true) ||
             (_alphaU.R_leg_flag == true &&
@@ -158,42 +136,11 @@ public class PoseManager : MonoBehaviour
             _Pose = PoseState.AlphaX;
             _scoreCount = true;
         }
-        if((_exit.R_arm_flag == true &&
-            _exit.L_arm_flag == true) ||
-            (_exit.R_leg_flag == true &&
-            _exit.L_leg_flag == true))
-        {
-            _Pose = PoseState.Exit;
-            _scoreCount = true;
-        }
-        if((_big.R_arm_flag == true &&
-            _big.L_arm_flag == true) ||
-            (_big.R_leg_flag == true &&
-            _big.L_leg_flag == true))
-        {
-            _Pose = PoseState.Sprawled;
-            _scoreCount = true;
-        }
-        if((_happy.R_arm_flag == true &&
-            _happy.L_arm_flag == true) ||
-            (_happy.R_leg_flag == true &&
-            _happy.L_leg_flag == true))
-        {
-            _Pose = PoseState.Joy;
-            _scoreCount = true;
-        }
     }
     // 全身ポーズの判定
     public void GetPose()
     {
         /*上半身、下半身のポーズが是のとき、全身でのポーズのフラグを是に*/
-        if(_shiko.L_arm_flag == true &&
-            _shiko.R_arm_flag == true &&
-            _shiko.L_leg_flag == true &&
-            _shiko.R_leg_flag == true)
-        {
-            _ScoreWhole = true;
-        }
         if (_alphaU.L_arm_flag == true &&
             _alphaU.R_arm_flag == true &&
             _alphaU.L_leg_flag == true &&
@@ -215,31 +162,12 @@ public class PoseManager : MonoBehaviour
         {
             _ScoreWhole = true;
         }
-        if (_big.L_arm_flag == true &&
-            _big.R_arm_flag == true &&
-            _big.L_leg_flag == true &&
-            _big.R_leg_flag == true)
-        {
-            _ScoreWhole = true;
-        }
-        if (_happy.L_arm_flag == true &&
-            _happy.R_arm_flag == true &&
-            _happy.L_leg_flag == true &&
-            _happy.R_leg_flag == true)
-        {
-            _ScoreWhole = true;
-        }
     }
 
     // 両腕ポーズの判定
     public void GetUpperPose()
     {
         /* 両腕の判定が是のとき、上半身ポーズのフラグを是に*/
-        if (_shiko.R_arm_flag == true &&
-            _shiko.L_arm_flag == true)
-        {
-            _ScoreUpper = true;
-        }
         if (_alphaU.R_arm_flag == true &&
             _alphaU.L_arm_flag == true)
         {
@@ -250,32 +178,12 @@ public class PoseManager : MonoBehaviour
         {
             _ScoreUpper = false;
         }
-        if (_exit.R_arm_flag == true &&
-            _exit.L_arm_flag == true)
-        {
-            _ScoreUpper = true;
-        }
-        if (_big.R_arm_flag == true &&
-            _big.L_arm_flag == true)
-        {
-            _ScoreUpper = true;
-        }
-        if (_happy.R_arm_flag == true &&
-            _happy.L_arm_flag == true)
-        {
-            _ScoreUpper = true;
-        }
     }
 
     // 両足ポーズの判定
     public void GetLowerPose()
     {
         /*両足の判定は是のとき、下半身ポーズのフラグを是に*/
-        if (_shiko.R_leg_flag == true &&
-            _shiko.L_leg_flag == true)
-        {
-            _ScoreLower = true;
-        }
         if (_alphaU.R_leg_flag == true &&
             _alphaU.L_leg_flag == true)
         {
@@ -283,21 +191,6 @@ public class PoseManager : MonoBehaviour
         }
         if (_alphaX.R_leg_flag == true &&
             _alphaX.L_leg_flag == true)
-        {
-            _ScoreLower = true;
-        }
-        if (_exit.R_leg_flag == true &&
-            _exit.L_leg_flag == true)
-        {
-            _ScoreLower = true;
-        }
-        if (_big.R_leg_flag == true &&
-            _big.L_leg_flag == true)
-        {
-            _ScoreLower = true;
-        }
-        if (_happy.R_leg_flag == true &&
-            _happy.L_leg_flag == true)
         {
             _ScoreLower = true;
         }
