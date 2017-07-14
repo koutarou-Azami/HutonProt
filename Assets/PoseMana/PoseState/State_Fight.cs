@@ -175,13 +175,13 @@ public class State_Fight : MonoBehaviour {
         if (_pose_upper == true)
         {
             Vector3 pos = _rShoulder.transform.position;
-            _Chance.transform.position = new Vector3(pos.x, pos.y + 10.0f, pos.z);
+            _Chance.transform.position = new Vector3(pos.x, pos.y + 5.0f, pos.z - 2.0f);
         }
         // 左太ももの座標を取得する
         if (_pose_lower == true)
         {
             Vector3 pos = _lCrotch.transform.position;
-            _Chance.transform.position = new Vector3(pos.x, pos.y + 10.0f, pos.z);
+            _Chance.transform.position = new Vector3(pos.x, pos.y + 5.0f, pos.z + 2.0f);
         }
         alpha = 1.0f;
     }
